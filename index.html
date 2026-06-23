@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forja Legendaria | Tienda de Espadas de Colección</title>
+    <style>
+        :root {
+            --bg-principal: #121214;
+            --bg-secundario: #1a1a1e;
+            --acento-oro: #d4af37;
+            --acento-oro-hover: #f3cd4a;
+            --texto-claro: #f5f5f7;
+            --texto-mutado: #a0a0a5;
+            --borde: #2a2a30;
+            --rojo-eliminar: #e056fd;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-principal);
+            color: var(--texto-claro);
+            line-height: 1.6;
+        }
+
+        header {
+            background-color: var(--bg-secundario);
+            border-bottom: 1px solid var(--borde);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--acento-oro);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        nav a {
+            color: var(--texto-claro);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--acento-oro);
+        }
+
+        .cart-icon-container {
+            position: relative;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: var(--texto-claro);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background-color: var(--acento-oro);
+            color: var(--bg-principal);
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.75rem;
+            font-weight: bold;
+        }
+
+        .hero {
+            padding: 4rem 2rem;
+            text-align: center;
+            background: linear-gradient(rgba(18, 18, 20, 0.8), rgba(18, 18, 20, 0.95)), url('https://images.unsplash.com/photo-1599733589046-10c005739ef9?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+            border-bottom: 1px solid var(--borde);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            color: var(--texto-claro);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .hero p {
+            color: var(--texto-mutado);
+            max-width: 600px;
+            margin: 0 auto 2rem auto;
+            font-size: 1.1rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .catalog-title {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            color: var(--acento-oro);
+            text-align: center;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background-color: var(--bg-secundario);
+            border: 1px solid var(--borde);
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, border-color 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--acento-oro);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            background-color: #2e2e35;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .product-category {
+            font-size: 0.8rem;
+            color: var(--acento-oro);
+            text-transform: uppercase;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
+        }
+
+        .product-name {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-desc {
+            color: var(--texto-mutado);
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            flex-grow: 1;
+        }
+
+        .product-price-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--texto-claro);
+        }
+
+        .btn-add {
+            background-color: var(--acento-oro);
+            color: var(--bg-principal);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-add:hover {
+            background-color: var(--acento-oro-hover);
+        }
+
+        /* Sidebar del carrito */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100%;
+            background-color: var(--bg-secundario);
+            box-shadow: -5px 0 15px rgba(0,0,0,0.5);
+            z-index: 200;
+            transition: right 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            padding: 2rem;
+            border-left: 1px solid var(--borde);
+        }
+
+        .cart-sidebar.active {
+            right: 0;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--borde);
+            padding-bottom: 1rem;
+        }
+
+        .btn-close-cart {
+            background: none;
+            border: none;
+            color: var(--texto-claro);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .cart-items {
+            flex-grow: 1;
+            overflow-y: auto;
+            margin-bottom: 1rem;
+        }
+
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .cart-item-details h4 {
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .cart-item-details p {
+            color: var(--texto-mutado);
+            font-size: 0.9rem;
+        }
+
+        .btn-remove {
+            background: none;
+            border: none;
+            color: #ff5252;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .cart-total-section {
+            border-top: 1px solid var(--borde);
+            padding-top: 1rem;
+        }
+
+        .cart-total-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            background-color: var(--acento-oro);
+            color: var(--bg-principal);
+            border: none;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-checkout:hover {
+            background-color: var(--acento-oro-hover);
+        }
+
+        /* Modal de confirmación */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            z-index: 300;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal {
+            background-color: var(--bg-secundario);
+            border: 1px solid var(--acento-oro);
+            padding: 2.5rem;
+            border-radius: 8px;
+            text-align: center;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .modal h3 {
+            color: var(--acento-oro);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+        }
+
+        .modal p {
+            margin-bottom: 1.5rem;
+            color: var(--texto-claro);
+        }
+
+        .btn-modal-close {
+            background-color: transparent;
+            color: var(--texto-claro);
+            border: 1px solid var(--borde);
+            padding: 0.5rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn-modal-close:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        footer {
+            background-color: var(--bg-secundario);
+            border-top: 1px solid var(--borde);
+            text-align: center;
+            padding: 2rem;
+            color: var(--texto-mutado);
+            font-size: 0.9rem;
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">
+            ⚔️ Forja Legendaria
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#catalogo">Catálogo</a></li>
+                <li><a href="#nosotros">Sobre Nosotros</a></li>
+            </ul>
+        </nav>
+        <button class="cart-icon-container" onclick="toggleCart()">
+            🛒 Carrito
+            <span class="cart-count" id="cart-count">0</span>
+        </button>
+    </header>
+
+    <section class="hero">
+        <h1>Armas Legendarias para Coleccionistas</h1>
+        <p>Explora nuestra selección de espadas forjadas a mano con acero de alta calidad. Piezas históricas, katanas y mandobles de combate listos para su exhibición.</p>
+        <a href="#catalogo" class="btn-add" style="text-decoration: none; display: inline-block;">Ver Catálogo</a>
+    </section>
+
+    <main class="container" id="catalogo">
+        <h2 class="catalog-title">Nuestro Arsenal Disponible</h2>
+        <div class="products-grid" id="products-grid">
+            <!-- Los productos se cargarán dinámicamente -->
+        </div>
+    </main>
+
+    <!-- Barra lateral del carrito -->
+    <div class="cart-sidebar" id="cart-sidebar">
+        <div class="cart-header">
+            <h3>Tu Carrito</h3>
+            <button class="btn-close-cart" onclick="toggleCart()">✕</button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <!-- Items agregados -->
+        </div>
+        <div class="cart-total-section">
+            <div class="cart-total-row">
+                <span>Total:</span>
+                <span id="cart-total">$0.00</span>
+            </div>
+            <button class="btn-checkout" onclick="checkout()">Proceder al Pago</button>
+        </div>
+    </div>
+
+    <!-- Modal de Éxito -->
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal">
+            <h3>¡Pedido Recibido!</h3>
+            <p>Tu orden ha sido procesada con éxito. Un maestro forjador se pondrá en contacto contigo para coordinar el envío seguro de tus armas.</p>
+            <button class="btn-modal-close" onclick="closeModal()">Cerrar</button>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 Forja Legendaria S.A. Todos los derechos reservados. Diseñado para coleccionistas de honor.</p>
+    </footer>
+
+    <script>
+        // Inventario de espadas por defecto (editable según el documento)
+        const productos = [
+            { id: 1, name: "Katana Muramasa", category: "Katanas", price: 450.00, desc: "Acero al carbono plegado 1095, filo supremo y empuñadura de piel de raya auténtica.", img: "https://images.unsplash.com/photo-1599733589046-10c005739ef9?auto=format&fit=crop&w=500&q=80" },
+            { id: 2, name: "Mandoble del Rey Arturo", category: "Medievales", price: 380.00, desc: "Réplica ceremonial de dos manos con detalles grabados en oro y pomo pesado.", img: "https://images.unsplash.com/photo-1518972460497-e236e76aa49e?auto=format&fit=crop&w=500&q=80" },
+            { id: 3, name: "Gladius Romano Prorrateado", category: "Antiguas", price: 290.00, desc: "Espada corta romana ideal para exhibición, hoja recta de acero inoxidable pulido.", img: "https://images.unsplash.com/photo-1609102434469-a2923984be49?auto=format&fit=crop&w=500&q=80" },
+            { id: 4, name: "Cimitarra de Damasco", category: "Orientales", price: 520.00, desc: "Hoja curva con el característico patrón de ondas del auténtico acero de Damasco.", img: "https://images.unsplash.com/photo-1599733589046-10c005739ef9?auto=format&fit=crop&w=500&q=80" }
+        ];
+
+        let carrito = [];
+
+        // Renderizar catálogo
+        function renderCatalog() {
+            const grid = document.getElementById('products-grid');
+            grid.innerHTML = productos.map(p => `
+                <div class="product-card">
+                    <img src="${p.img}" alt="${p.name}" class="product-img">
+                    <div class="product-info">
+                        <span class="product-category">${p.category}</span>
+                        <h3 class="product-name">${p.name}</h3>
+                        <p class="product-desc">${p.desc}</p>
+                        <div class="product-price-row">
+                            <span class="product-price">$${p.price.toFixed(2)}</span>
+                            <button class="btn-add" onclick="addToCart(${p.id})">Añadir</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Mostrar / Ocultar carrito
+        function toggleCart() {
+            document.getElementById('cart-sidebar').classList.toggle('active');
+        }
+
+        // Agregar al carrito
+        function addToCart(id) {
+            const producto = productos.find(p => p.id === id);
+            const itemEnCarrito = carrito.find(item => item.id === id);
+
+            if (itemEnCarrito) {
+                itemEnCarrito.quantity++;
+            } else {
+                carrito.push({ ...producto, quantity: 1 });
+            }
+
+            updateCartUI();
+        }
+
+        // Eliminar del carrito
+        function removeFromCart(id) {
+            carrito = carrito.filter(item => item.id !== id);
+            updateCartUI();
+        }
+
+        // Actualizar interfaz del carrito
+        function updateCartUI() {
+            // Contador
+            const count = carrito.reduce((acc, item) => acc + item.quantity, 0);
+            document.getElementById('cart-count').innerText = count;
+
+            // Lista de items
+            const container = document.getElementById('cart-items');
+            if (carrito.length === 0) {
+                container.innerHTML = '<p style="color: var(--texto-mutado); text-align: center; margin-top: 2rem;">El carrito está vacío</p>';
+            } else {
+                container.innerHTML = carrito.map(item => `
+                    <div class="cart-item">
+                        <div class="cart-item-details">
+                            <h4>${item.name}</h4>
+                            <p>${item.quantity} x $${item.price.toFixed(2)}</p>
+                        </div>
+                        <button class="btn-remove" onclick="removeFromCart(${item.id})">Eliminar</button>
+                    </div>
+                `).join('');
+            }
+
+            // Total
+            const total = carrito.reduce((acc, item) => acc + (item.price * item.quantity), 0);
+            document.getElementById('cart-total').innerText = `$${total.toFixed(2)}`;
+        }
+
+        // Checkout
+        function checkout() {
+            if (carrito.length === 0) {
+                alert("Tu carrito está vacío.");
+                return;
+            }
+            document.getElementById('modal-overlay').style.display = 'flex';
+            carrito = [];
+            updateCartUI();
+            toggleCart();
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').style.display = 'none';
+        }
+
+        // Inicializar
+        renderCatalog();
+    </script>
+</body>
+</html>
